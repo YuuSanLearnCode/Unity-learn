@@ -5,11 +5,14 @@ public class NewMonoBehaviourScript : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
 
-    [SerializeField] private float moveSpeed ;
-    [SerializeField]private float jumpForce ;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float jumpForce;
 
     private float xInput;
-    
+
+    [SerializeField] private int facingDir = 1;
+    [SerializeField] private bool facingRight = true;
+
 
     private void Start()
     {
@@ -22,7 +25,12 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         Movement();
         CheckInput();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Flip();
+        }
 
+        FlipController();
         AnimatorController();
     }
 
@@ -53,5 +61,22 @@ public class NewMonoBehaviourScript : MonoBehaviour
         anim.SetBool("isMoving", isMoving);
     }
 
+    private void Flip()
+    {
+        facingDir = facingDir * -1;
+        facingRight = !facingRight;
+        transform.Rotate(0, 180, 0);
+    }
+    private void FlipController()
+    {
+        if (rb.linearVelocity.x > 0 && !facingRight)
+        {
+            Flip();
+        }
+        else if (rb.linearVelocity.x < 0 && facingRight)
+        {
+            Flip();
+        }
+    }
 
 }
