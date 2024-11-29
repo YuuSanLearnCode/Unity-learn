@@ -10,10 +10,13 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private float xInput;
 
-    [SerializeField] private int facingDir = 1;
-    [SerializeField] private bool facingRight = true;
+    private int facingDir = 1;
+    private bool facingRight = true;
 
-
+    [Header("Collision info")]
+    [SerializeField] private float groundCheck;
+    [SerializeField] private LayerMask whatIsGround;
+    private bool isGrounded;
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>(); //de rigidbody tu gan vo gai tri rb
@@ -25,13 +28,16 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         Movement();
         CheckInput();
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Flip();
-        }
+        CollisionChecks();
 
         FlipController();
         AnimatorController();
+
+    }
+
+    private void CollisionChecks()
+    {
+        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheck, whatIsGround);
     }
 
     private void CheckInput()
@@ -51,7 +57,11 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void Jump()
     {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        if (isGrounded)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        }
+
     }
 
     private void AnimatorController()
@@ -79,4 +89,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - groundCheck));
+    }
 }
